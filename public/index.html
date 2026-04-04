@@ -2,34 +2,21 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyGPT Aesthetic</title>
+<title>MyGPT</title>
 <style>
 body {
   margin:0;
-  font-family:Arial,sans-serif;
+  font-family:Arial;
   display:flex;
   height:100vh;
-  background:linear-gradient(135deg,#0f172a,#020617);
+  background:#0f172a;
   color:white;
-  transition:all 0.5s ease;
 }
 .sidebar {
   width:250px;
-  background:rgba(0,0,0,0.4);
-  backdrop-filter:blur(10px);
-  padding:15px;
-  overflow-y:auto;
-}
-.chat-item {
+  background:#020617;
   padding:10px;
-  margin:5px 0;
-  background:#1e293b;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
 }
-.chat-item:hover { background:#374151; }
 .main {
   flex:1;
   display:flex;
@@ -41,108 +28,67 @@ body {
   overflow-y:auto;
 }
 .message {
-  margin:10px 0;
   padding:10px;
+  margin:10px 0;
   border-radius:10px;
-  max-width:70%;
-  animation: fadeIn 0.3s ease;
 }
-.user { background:#2563eb; align-self:flex-end; }
-.bot { background:#1e293b; align-self:flex-start; }
+.user { background:#2563eb; }
+.bot { background:#1e293b; }
+
 .input-area {
   display:flex;
   padding:10px;
-  background:rgba(0,0,0,0.5);
 }
 input {
   flex:1;
   padding:10px;
-  border-radius:8px;
-  border:none;
-  outline:none;
 }
 button {
-  margin-left:10px;
   padding:10px;
-  background:#22c55e;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
 }
-button:hover { background:#16a34a; }
-
-/* Dark mode animation */
-@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 </style>
 </head>
+
 <body>
-<div class="sidebar" id="sidebar"><h3>💬 Chat salvate</h3></div>
+
+<div class="sidebar">
+  💬 Chat salvate
+</div>
+
 <div class="main">
   <div class="chat-box" id="chat"></div>
+
   <div class="input-area">
-    <input id="input" placeholder="Scrivi qualcosa...">
-    <button onclick="sendMessage()">Invia</button>
+    <input id="input" placeholder="Scrivi...">
+    <button onclick="send()">Invia</button>
   </div>
 </div>
 
 <script>
-let chats = JSON.parse(localStorage.getItem('chats')) || [];
-let currentChat = [];
+function send() {
+  let input = document.getElementById("input");
+  let text = input.value;
+  if (!text) return;
 
-function renderSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = '<h3>💬 Chat salvate</h3>';
-  chats.forEach((c,i)=>{
-    const div = document.createElement('div');
-    div.className = 'chat-item';
-    div.innerText = 'Chat '+(i+1);
-    div.onclick = ()=>loadChat(i);
-    sidebar.appendChild(div);
-  });
+  add(text, "user");
+
+  // risposta finta
+  let reply = "Hai scritto: " + text;
+
+  setTimeout(() => {
+    add(reply, "bot");
+  }, 500);
+
+  input.value = "";
 }
 
-function loadChat(i) {
-  currentChat = chats[i];
-  const chatBox = document.getElementById('chat');
-  chatBox.innerHTML = '';
-  currentChat.forEach(m=>addMessage(m.text,m.type));
-}
-
-function saveChat() {
-  chats.push(currentChat);
-  localStorage.setItem('chats',JSON.stringify(chats));
-  renderSidebar();
-}
-
-async function sendMessage() {
-  const input = document.getElementById('input');
-  const text = input.value;
-  if(!text) return;
-  addMessage(text,'user');
-  currentChat.push({text,type:'user'});
-  input.value='';
-  const res = await fetch('/chat',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({message:text})
-  });
-  const data = await res.json();
-  addMessage(data.reply,'bot');
-  currentChat.push({text:data.reply,type:'bot'});
-  saveChat();
-}
-
-function addMessage(text,type){
-  const chatBox = document.getElementById('chat');
-  const div = document.createElement('div');
-  div.className='message '+type;
+function add(text, type) {
+  let div = document.createElement("div");
+  div.className = "message " + type;
   div.innerText = text;
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  document.getElementById("chat").appendChild(div);
 }
-
-renderSidebar();
 </script>
+
 </body>
 </html>
