@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>MyGPT</title>
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  display:flex;
+  height:100vh;
+  background:#0f172a;
+  color:white;
+}
+.sidebar {
+  width:250px;
+  background:#020617;
+  padding:10px;
+}
+.main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.chat-box {
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+}
+.message {
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
+}
+.user { background:#2563eb; }
+.bot { background:#1e293b; }
+
+.input-area {
+  display:flex;
+  padding:10px;
+}
+input {
+  flex:1;
+  padding:10px;
+}
+button {
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  💬 Chat salvate
+</div>
+
+<div class="main">
+  <div class="chat-box" id="chat"></div>
+
+  <div class="input-area">
+    <input id="input" placeholder="Scrivi...">
+    <button onclick="send()">Invia</button>
+  </div>
+</div>
+
+<script>
+function send() {
+  let input = document.getElementById("input");
+  let text = input.value;
+  if (!text) return;
+
+  add(text, "user");
+
+  // risposta finta
+  let reply = "Hai scritto: " + text;
+
+  setTimeout(() => {
+    add(reply, "bot");
+  }, 500);
+
+  input.value = "";
+}
+
+function add(text, type) {
+  let div = document.createElement("div");
+  div.className = "message " + type;
+  div.innerText = text;
+  document.getElementById("chat").appendChild(div);
+}
+</script>
+
+</body>
+</html>
